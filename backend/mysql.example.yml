@@ -1,0 +1,10 @@
+name:
+services:
+  mysql_db:
+    container_name:
+    image:
+    environment:
+      MYSQL_DATABASE:
+      MYSQL_ROOT_PASSWORD:
+    ports:
+    command: --default-authentication-plugin=mysql_native_password

@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model User {
+  id       Int        @id @default(autoincrement())
+  email    String     @unique
+  password String
+  fullName String
+  role     Role
+  status   UserStatus @default(ACTIVE)
+
+  student Student?
+  teacher Teacher?
+
+  @@map("users")
+}
+
+model Student {
+  id   Int    @id @default(autoincrement())
+  MSHS String @unique
+
+  userID Int  @unique
+  user   User @relation(fields: [userID], references: [id], onDelete: Cascade)
+}
+
+model Teacher {
+  id         Int    @id @default(autoincrement())
+  MSGV       String @unique // MSGV (VD: GV012)
+  department String // Tổ chuyên môn (VD: Tổ Toán, Tổ Văn)
+
+  userID Int  @unique
+  user   User @relation(fields: [userID], references: [id], onDelete: Cascade)
+}
+
+model Class {
+  id           Int    @id @default(autoincrement())
+  name         String @unique // "10A1"
+  grade        Int // 10
+  academicYear String // "2025-2026"
+}
+
+model Subject {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}
+
+model Quiz {
+  id        Int     @id @default(autoincrement())
+  title     String
+  timeLimit Int
+  joinCode  String? @unique
+}
+
+model Question {
+  id      Int    @id @default(autoincrement())
+  content String @db.Text
+}
+
+model Option {
+  id        Int     @id @default(autoincrement())
+  content   String
+  isCorrect Boolean @default(false)
+}
+
+// model QuizAttempt {
+//   id         Int       @id @default(autoincrement())
+//   score      Float?
+//   startTime  DateTime  @default(now())
+//   submitTime DateTime?
+
+//   @@unique([studentId, quizId])
+// }
