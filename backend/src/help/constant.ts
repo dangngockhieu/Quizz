@@ -1,0 +1,1 @@
+export { Role, UserStatus, QuizTypeResult, QuestionType } from '@prisma/client'

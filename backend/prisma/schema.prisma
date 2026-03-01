@@ -31,165 +31,125 @@ enum QuestionType {
 }
 
 model User {
-  id       Int        @id @default(autoincrement())
-  email    String     @unique
-  password String
-  fullName String
-  role     Role
-  status   UserStatus @default(ACTIVE)
+  id           Int        @id @default(autoincrement())
+  email        String     @unique
+  password     String
+  fullName     String
+  refreshToken String?
+  role         Role
+  status       UserStatus @default(ACTIVE)
 
-  student Student?
-  teacher Teacher?
+  classes  UserClass[]
+  attempts Attempt[]
 
   @@map("users")
 }
 
-model Student {
-  id   Int    @id @default(autoincrement())
-  MSSV String @unique
+model Class {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
 
-  userID Int  @unique
-  user   User @relation(fields: [userID], references: [id], onDelete: Cascade)
+  users        UserClass[]
+  classQuizzes ClassQuiz[]
 
-  enrollments Enrollment[]
-  attempts    QuizAttempt[]
-
-  @@map("students")
+  @@map("classes")
 }
 
-model Teacher {
-  id      Int    @id @default(autoincrement())
-  MSGV    String @unique
-  faculty String
+model UserClass {
+  userID  Int
+  classID Int
 
-  userID Int  @unique
-  user   User @relation(fields: [userID], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userID], references: [id], onDelete: Cascade)
+  class Class @relation(fields: [classID], references: [id], onDelete: Cascade)
 
-  sections Section[]
-
-  @@map("teachers")
-}
-
-model Semester {
-  id Int @id @default(autoincrement())
-
-  year       Int // 2025
-  semesterNo Int // 1,2,3 (nếu có hè)
-
-  startDate DateTime
-  endDate   DateTime
-
-  sections Section[]
-
-  @@unique([year, semesterNo])
-  @@map("semesters")
-}
-
-model Course {
-  id     Int    @id @default(autoincrement())
-  code   String @unique // IT001
-  name   String
-  credit Int
-
-  sections Section[]
-
-  @@map("courses")
-}
-
-model Section {
-  id Int @id @default(autoincrement())
-
-  code String // VD: L01
-
-  semesterID Int
-  courseID   Int
-  teacherID  Int
-
-  semester Semester @relation(fields: [semesterID], references: [id], onDelete: Cascade)
-  course   Course   @relation(fields: [courseID], references: [id], onDelete: Cascade)
-  teacher  Teacher  @relation(fields: [teacherID], references: [id], onDelete: Cascade)
-
-  enrollments Enrollment[]
-  quizzes     Quiz[]
-
-  @@unique([code, semesterID, courseID])
-  @@index([courseID])
-  @@index([teacherID])
-  @@map("sections")
-}
-
-// ENROLLMENT (SV ĐĂNG KÝ LỚP)
-
-model Enrollment {
-  id Int @id @default(autoincrement())
-
-  studentID Int
-  sectionID Int
-
-  student Student @relation(fields: [studentID], references: [id], onDelete: Cascade)
-  section Section @relation(fields: [sectionID], references: [id], onDelete: Cascade)
-
-  @@unique([studentID, sectionID])
-  @@index([studentID])
-  @@index([sectionID])
+  @@id([userID, classID])
+  @@map("user_classes")
 }
 
 model Quiz {
-  id         Int            @id @default(autoincrement())
-  title      String
-  timeStart  DateTime
-  timeEnd    DateTime
-  timeLimit  Int
-  typeResult QuizTypeResult
+  id           Int            @id @default(autoincrement())
+  title        String
+  description  String?
+  timeStart    DateTime
+  timeEnd      DateTime
+  timeLimit    Int
+  typeResult   QuizTypeResult
+  countAttempt Int            @default(1)
 
-  sectionID Int
-  section   Section @relation(fields: [sectionID], references: [id], onDelete: Cascade)
+  questions    Question[]
+  attempts     Attempt[]
+  classQuizzes ClassQuiz[]
 
-  questions Question[]
-  attempts  QuizAttempt[]
-
-  @@index([sectionID])
   @@map("quizzes")
 }
 
+model ClassQuiz {
+  classID Int
+  quizID  Int
+
+  class Class @relation(fields: [classID], references: [id], onDelete: Cascade)
+  quiz  Quiz  @relation(fields: [quizID], references: [id], onDelete: Cascade)
+
+  @@id([classID, quizID])
+  @@map("class_quizzes")
+}
+
 model Question {
-  id          Int          @id @default(autoincrement())
-  description String
-  type        QuestionType
+  id      Int          @id @default(autoincrement())
+  quizID  Int
+  content String
+  type    QuestionType
 
-  quizID Int
-  quiz   Quiz @relation(fields: [quizID], references: [id], onDelete: Cascade)
-
-  answers Answer[]
+  quiz    Quiz            @relation(fields: [quizID], references: [id], onDelete: Cascade)
+  options Option[]
+  answers AttemptAnswer[]
 
   @@map("questions")
 }
 
-model Answer {
-  id          Int     @id @default(autoincrement())
-  description String
-  isCorrect   Boolean @default(false)
-
+model Option {
+  id         Int     @id @default(autoincrement())
   questionID Int
-  question   Question @relation(fields: [questionID], references: [id], onDelete: Cascade)
+  content    String
+  isCorrect  Boolean
 
-  @@index([questionID])
-  @@map("answers")
+  question Question        @relation(fields: [questionID], references: [id], onDelete: Cascade)
+  answers  AttemptAnswer[]
+
+  @@map("options")
 }
 
-model QuizAttempt {
-  id         Int       @id @default(autoincrement())
-  score      Float
-  startTime  DateTime  @default(now())
-  submitTime DateTime?
-
-  studentID Int
+model Attempt {
+  id        Int      @id @default(autoincrement())
+  userID    Int
   quizID    Int
+  score     Float
+  timeStart DateTime
+  timeEnd   DateTime
 
-  student Student @relation(fields: [studentID], references: [id], onDelete: Cascade)
-  quiz    Quiz    @relation(fields: [quizID], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userID], references: [id], onDelete: Cascade)
+  quiz Quiz @relation(fields: [quizID], references: [id], onDelete: Cascade)
 
-  @@index([studentID])
-  @@index([quizID])
-  @@map("quiz_attempts")
+  answers AttemptAnswer[]
+
+  @@index([userID, quizID])
+  @@map("attempts")
+}
+
+model AttemptAnswer {
+  id         Int @id @default(autoincrement())
+  attemptID  Int
+  questionID Int
+  optionID   Int
+
+  isCorrect Boolean?
+  score     Float?
+
+  attempt  Attempt  @relation(fields: [attemptID], references: [id], onDelete: Cascade)
+  question Question @relation(fields: [questionID], references: [id], onDelete: Cascade)
+  option   Option   @relation(fields: [optionID], references: [id])
+
+  @@unique([attemptID, questionID])
+  @@map("attempt_answers")
 }
