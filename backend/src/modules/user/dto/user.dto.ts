@@ -27,6 +27,5 @@ export class ChangePasswordDTO {
     @IsString()
     @IsNotEmpty({ message: 'New Password không được để trống' })
     @MinLength(6)
-    @MaxLength(30)
     newPassword: string;
 }

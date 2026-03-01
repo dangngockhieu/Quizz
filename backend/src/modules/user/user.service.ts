@@ -48,10 +48,6 @@ export class UserService {
 
     // ADMIN: Update thông tin một User
     async updateUser(id: number, fullName?: string, role?: Role) {
-      const user = await this.prisma.user.findUnique({ where: { id } });
-      if (!user) {
-        throw new NotFoundException('User không tồn tại');
-      }
       return await this.prisma.user.update({
         where: { id },
         data: {
@@ -82,29 +78,21 @@ export class UserService {
 
     // ADMIN: Update Đổi Mật khẩu một User nếu họ quên và yêu cầu reset mật khẩu
     async updatePasswordUserForAdmin(id: number, newPassword: string) {
-      const user = await this.prisma.user.findUnique({ where: { id } });
-      if (!user) {
-        throw new NotFoundException('User không tồn tại');
-      }
       const password = await argon.hash(newPassword);
       return await this.prisma.user.update({
         where: { id },
         data: {
-          password: password
+          password,
         },
       });
     }
 
     // ADMIN: Update status một User
     async updateStatusUser(id: number, status: UserStatus) {
-      const user = await this.prisma.user.findUnique({ where: { id } });
-      if (!user) {
-        throw new NotFoundException('User không tồn tại');
-      }
       return await this.prisma.user.update({
         where: { id },
         data: {
-          status
+          status,
         },
       });
     }
