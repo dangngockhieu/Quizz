@@ -31,6 +31,21 @@ export class UserService {
       return `${pattern}${nextNumber.toString().padStart(padLength, '0')}`;
     }
 
+    // Lấy thông tin User theo code
+    async findUserByCode(code: string) {
+      return await this.prisma.user.findUnique({
+        where: { code },
+        select: {
+          id: true,
+          code: true,
+          fullName: true,
+          password: true,
+          refreshToken: true,
+          role: true,
+          status: true,
+        },
+      });
+    }
     // ADMIN: Thêm mới một User (code tự động tạo)
     async createUser(fullName: string, role: Role) {
       const code = await this.generateCode(role);
