@@ -1,6 +1,6 @@
 import { Controller, Patch, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './local';
+import { LocalAuthGuard } from './guards';
 import { UserAccount } from './interface';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';

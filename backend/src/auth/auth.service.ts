@@ -19,7 +19,7 @@ export class AuthService {
 
     // TẠO TOKEN 
     private async generateToken(user: UserAccount): Promise<{ accessToken: string; refreshToken: string }> {
-        const payload = { sub: user.id, email: user.code, name: user.fullName, role: user.role };
+        const payload = { sub: user.id, code: user.code, name: user.fullName, role: user.role };
 
         const accessToken = await this.jwt.signAsync(payload, {
             secret: this.config.get<string>('JWT_SECRET'),
@@ -93,7 +93,7 @@ export class AuthService {
 
         const isValid = await argon.verify(user.refreshToken, refreshToken);
         if (!isValid) throw new UnauthorizedException('Invalid refresh token');
-        const payloadNew = { sub: user.id, email: user.code, name: user.fullName, role: user.role };
+        const payloadNew = { sub: user.id, code: user.code, name: user.fullName, role: user.role };
         const accessToken = await this.jwt.signAsync(payloadNew, {
             secret: this.config.get<string>('JWT_SECRET'),
             expiresIn: this.config.get<string>('JWT_EXPIRED') as any,
