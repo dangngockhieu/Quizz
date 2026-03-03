@@ -1,0 +1,31 @@
+.admin-class-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .pill-tabs .btn {
+    border-radius: 999px;
+    padding: 8px 16px;
+  }
+
+  .card--float {
+    border: 1px solid #e2e8f0;
+  }
+
+  .page-header__actions {
+    margin-top: 6px;
+  }
+
+  .table-wrap {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .data-table tbody tr:hover td {
+    background: #f7fafc;
+  }
+
+  .modal {
+    border: 1px solid #e2e8f0;
+  }
+}

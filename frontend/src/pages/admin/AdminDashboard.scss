@@ -1,0 +1,122 @@
+@use "sass:color";
+
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  .admin-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 26px 28px;
+    border-radius: 16px;
+    background: linear-gradient(120deg, #0f172a 0%, #0ea5e9 50%, #1e3a8a 100%);
+    color: #e2e8f0;
+    box-shadow: 0 18px 48px rgba(15, 23, 42, 0.25);
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 25% 20%, rgba(244, 255, 255, 0.22), transparent 35%),
+                  radial-gradient(circle at 80% 0%, rgba(59, 130, 246, 0.35), transparent 40%);
+      pointer-events: none;
+    }
+
+    &__content {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+    }
+
+    &__eyebrow {
+      display: inline-flex;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #e0f2fe;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    &__title {
+      font-size: 30px;
+      font-weight: 800;
+      color: #fff;
+      margin: 0 0 8px;
+    }
+
+    &__sub {
+      margin: 0;
+      color: #dbeafe;
+      font-size: 15px;
+    }
+
+    &__chips {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+
+      .chip {
+        background: rgba(255, 255, 255, 0.1);
+        color: #e0f2fe;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+
+      .chip--soft {
+        background: rgba(14, 165, 233, 0.16);
+        color: #e0f2fe;
+      }
+    }
+  }
+
+  .dashboard-stats {
+    position: relative;
+    z-index: 1;
+    margin-top: 4px;
+  }
+
+  .stat-card--glow {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 10px 36px rgba(15, 23, 42, 0.08);
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.7), transparent 40%);
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .stat-card__hint {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 6px;
+    }
+  }
+
+  .stat-card--users {
+    background: linear-gradient(180deg, #ffffff 0%, #e8f1ff 100%);
+  }
+
+  .stat-card--classes {
+    background: linear-gradient(180deg, #ffffff 0%, #e9fbf4 100%);
+  }
+
+  .stat-card--quizzes {
+    background: linear-gradient(180deg, #ffffff 0%, #f4f0ff 100%);
+  }
+}
+
+@media (max-width: 720px) {
+  .admin-dashboard .admin-hero {
+    padding: 22px;
+  }
+}

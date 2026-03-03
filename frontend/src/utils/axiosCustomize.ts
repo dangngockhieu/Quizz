@@ -12,6 +12,7 @@ NProgress.configure({
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
+  withCredentials: true,
 })
 
 let isRefreshing = false
@@ -67,7 +68,7 @@ instance.interceptors.response.use(
     }
 
     if (
-      error.response.status === 401 &&
+      (error.response.status === 401 || error.response.status === 403) &&
       !originalRequest._retry &&
       !String(originalRequest.url ?? '').includes('auth/refresh-token')
     ) {

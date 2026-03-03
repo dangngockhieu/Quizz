@@ -1,0 +1,142 @@
+.admin-users {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  .admin-users__card {
+    position: relative;
+    border: 1px solid rgba(148, 163, 184, 0.32);
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 12% 0%, rgba(14, 165, 233, 0.16), transparent 32%),
+                  radial-gradient(circle at 90% 20%, rgba(245, 158, 11, 0.14), transparent 32%);
+      pointer-events: none;
+    }
+  }
+
+  .admin-users__header {
+    align-items: stretch;
+    gap: 14px;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(29, 78, 216, 0.12), transparent 60%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+  }
+
+  .filter-bar__search input {
+    background: #f8fafc;
+    border-color: rgba(148, 163, 184, 0.4);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.04);
+  }
+
+  .data-table {
+    tbody tr:nth-child(odd) td {
+      background: #e2f3ff;
+    }
+
+    tbody tr:nth-child(even) td {
+      background: #eef2ff;
+    }
+
+    tbody tr {
+      transition: transform 0.08s ease;
+    }
+
+    tbody tr:hover {
+      transform: translateY(-1px);
+    }
+
+    td strong {
+      color: #0f172a;
+    }
+  }
+
+  .badge {
+    letter-spacing: 0.3px;
+  }
+
+  .table-actions .btn--outline {
+    border-color: #cbd5e1;
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .table-actions {
+    gap: 8px;
+
+    button:nth-child(1) {
+      /* edit */
+      border-color: #2563eb;
+      color: #1d4ed8;
+      background: linear-gradient(120deg, rgba(37, 99, 235, 0.12), rgba(59, 130, 246, 0.08));
+
+      &:hover {
+        background: rgba(37, 99, 235, 0.16);
+      }
+    }
+
+    button:nth-child(2) {
+      /* ban / toggle status */
+      border-color: #f97316;
+      color: #c2410c;
+      background: linear-gradient(120deg, rgba(249, 115, 22, 0.14), rgba(251, 146, 60, 0.12));
+
+      &:hover {
+        background: rgba(249, 115, 22, 0.18);
+      }
+    }
+  }
+
+  .btn.btn--danger.btn--sm {
+    background: linear-gradient(120deg, #ef4444, #f97316);
+    border: none;
+  }
+
+  .modal {
+    border: 1px solid #e2e8f0;
+  }
+
+  .modal__close {
+    background: #f18f8f;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 14px rgba(239, 68, 68, 0.35);
+
+    &:hover {
+      background: #f64b4b;
+    }
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 6px 4px;
+
+    .pagination__info {
+      color: #475569;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .btn {
+      min-width: 72px;
+    }
+  }
+}
