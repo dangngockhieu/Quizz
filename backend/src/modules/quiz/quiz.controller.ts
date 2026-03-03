@@ -17,7 +17,7 @@ export class QuizController {
     };
   }
 
-  @Put(':id')
+  @Put('/:id')
   async updateQuiz(@Param('id') id: number, @Body() body: CreateQuizDTO) {
     const quiz = await this.quizService.updateQuiz(id, body);
     return {
@@ -27,7 +27,7 @@ export class QuizController {
     };
   }
 
-  @Post(':quizID/questions')
+  @Post('/:quizID/questions')
   async createQuestion(@Param('quizID') quizID: number, @Body() question: CreateQuestionWithOptionsData) {
     const result = await this.quizService.createQuestion(quizID, question);
     return {
@@ -37,7 +37,7 @@ export class QuizController {
     };
   }
 
-  @Post(':quizID/questions/bulk')
+  @Post('/:quizID/questions/bulk')
   async createQuestionWithOptions(@Param('quizID') quizID: number, @Body() questions: CreateQuestionWithOptionsData[]) {
     const result = await this.quizService.createQuestionsWithOptions(quizID, questions);
     return {
@@ -47,7 +47,7 @@ export class QuizController {
     };
   }
 
-  @Put('questions/:id')
+  @Put('/questions/:id')
   async updateQuestion(@Param('id') id: number, @Body() question: CreateQuestionWithOptionsData) {
     const result = await this.quizService.updateQuestion(id, question);
     return {
@@ -57,7 +57,7 @@ export class QuizController {
     };
   }
 
-  @Post('questions/:questionID/options')
+  @Post('/questions/:questionID/options')
   async createOption(@Param('questionID') questionID: number, @Body() body: CreateOptionData) {
     const result = await this.quizService.createOption(questionID, body);
     return {
@@ -67,7 +67,7 @@ export class QuizController {
     };
   }
 
-  @Post('questions/:questionID/options/bulk')
+  @Post('/questions/:questionID/options/bulk')
   async createOptionsForQuestion(@Param('questionID') questionID: number, @Body() body: CreateOptionData[]) {
     const result = await this.quizService.createOptionsForQuestion(questionID, body);
     return {
@@ -77,7 +77,7 @@ export class QuizController {
     };
   }
 
-  @Put('options/:id')
+  @Put('/options/:id')
   async updateOption(@Param('id') id: number, @Body() body: CreateOptionData) {
     const result = await this.quizService.updateOption(id, body);
     return {

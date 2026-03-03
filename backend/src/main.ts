@@ -6,6 +6,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppExceptionFilter } from './help/filters/app-exception.filter';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const bootstrap = async() =>{
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -23,7 +25,8 @@ const bootstrap = async() =>{
     whitelist: true
   }));
   app.useGlobalFilters(new AppExceptionFilter());
-  await app.listen(process.env.PORT ?? 8080);
+  const port = Number(process.env.PORT) || 8080
+  await app.listen(port);
   if (module.hot) {
     module.hot.accept();
     module.hot.dispose(() => app.close());

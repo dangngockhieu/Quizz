@@ -1,5 +1,5 @@
 import { UserStatus } from '../../help/constant';
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, Req } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ChangePasswordDTO, CreateUserDTO, UpdateUserDTO } from './dto';
 
@@ -19,7 +19,7 @@ export class UserController {
   }
 
   // ADMIN: Update thông tin một User
-  @Patch(':id')
+  @Patch('/:id')
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateUserDTO,
@@ -33,7 +33,7 @@ export class UserController {
   }
 
   // User tự đổi mật khẩu
-  @Patch(':id/change-password')
+  @Patch('/:id/change-password')
   async changePasswordUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: ChangePasswordDTO,
@@ -47,7 +47,7 @@ export class UserController {
   }
 
   // ADMIN: Update Đổi Mật khẩu một User nếu họ quên và yêu cầu reset mật khẩu
-  @Patch(':id/reset-password')
+  @Patch('/:id/reset-password')
   async updatePasswordUserForAdmin(
     @Param('id', ParseIntPipe) id: number,
     @Body('newPassword') newPassword: string,
@@ -60,7 +60,7 @@ export class UserController {
   }
 
   // ADMIN: Update status một User
-  @Patch(':id/status')
+  @Patch('/:id/status')
   async updateStatusUser(
     @Param('id', ParseIntPipe) id: number,
     @Body('status') status: UserStatus,
@@ -73,7 +73,7 @@ export class UserController {
   }
 
   // ADMIN và Teacher: Lấy tất cả thông tin Student theo Class
-  @Get('students')
+  @Get('/students')
   async getStudentByClass(@Query('classID', ParseIntPipe) classID: number) {
     const students = await this.userService.getStudentsByClass(classID);
     return {
@@ -83,7 +83,7 @@ export class UserController {
   }
 
   // ADMIN: Lấy tất cả thông tin Teacher
-  @Get('teachers')
+  @Get('/teachers')
   async getAllTeacher(){
     const teachers = await this.userService.getAllTeachers();
     return {

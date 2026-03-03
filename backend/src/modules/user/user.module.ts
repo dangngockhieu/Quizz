@@ -1,18 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import { PassportModule } from '@nestjs/passport/dist/passport.module';
-import { JwtModule } from '@nestjs/jwt/dist/jwt.module';
-import { LocalStrategy } from '../../auth/strategy/local.strategy';
 
 @Module({
-  imports: [
-    JwtModule.register({}),
-    PassportModule,
-    UserModule
-  ],
+  imports: [],
   controllers: [UserController],
-  providers: [UserService, LocalStrategy],
-  exports: [UserService, LocalStrategy]
+  providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}

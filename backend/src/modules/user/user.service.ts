@@ -49,7 +49,7 @@ export class UserService {
     // ADMIN: Thêm mới một User (code tự động tạo)
     async createUser(fullName: string, role: Role) {
       const code = await this.generateCode(role);
-      const password = await argon.hash(code); // Default password là mã định danh đã tạo
+      const password = await argon.hash("123456"); // Default password là 123456
       return await this.prisma.user.create({
         data: {
           code,

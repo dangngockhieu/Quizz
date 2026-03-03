@@ -28,7 +28,7 @@ export class ClassController {
     }
 
     // ADMIN: Cập nhật thông tin khóa học
-    @Put(':id')
+    @Put('/:id')
     async updateClass(id: number, name: string, description: string){
       const classes = await this.classService.updateClass(id, name, description);
       return {
@@ -39,7 +39,7 @@ export class ClassController {
      }
 
      // ADMIN: Thêm Student/Teacher vào khóa học
-     @Post(':id/add-user')
+     @Post('/:id/add-user')
      async addUserToClass(classID: number, userID: number){
       const result = await this.classService.addUserToClass(classID, userID);
       return {

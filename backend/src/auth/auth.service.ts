@@ -1,4 +1,4 @@
-import { Injectable, Inject} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../help/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
@@ -10,11 +10,10 @@ import { UserAccount } from './interface';
 @Injectable()
 export class AuthService {
     constructor(
-        @Inject('DATABASE_POOL')  
-        private jwt: JwtService, 
-        private config: ConfigService,
-        private prisma: PrismaService,
-        private readonly userService: UserService           
+        private readonly jwt: JwtService,
+        private readonly config: ConfigService,
+        private readonly prisma: PrismaService,
+        private readonly userService: UserService,
     ) {}
 
     // TẠO TOKEN 
