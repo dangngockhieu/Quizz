@@ -5,6 +5,7 @@ import { UserAccount } from './interface';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { UnauthorizedException } from '../help/exception';
+import { Public } from './decorator/customize';
 
 @Controller('auth')
 export class AuthController {
@@ -14,6 +15,7 @@ export class AuthController {
 
   // Login
   @Post('login')
+  @Public()
   @UseGuards(LocalAuthGuard)
   async login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const user = req.user as UserAccount;
@@ -74,6 +76,7 @@ export class AuthController {
 
   // RefreshToken
   @Post('refresh-token')
+  @Public()
   async refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies['refreshToken'];
     if (!refreshToken) {

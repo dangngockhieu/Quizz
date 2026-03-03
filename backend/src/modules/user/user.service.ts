@@ -7,6 +7,67 @@ import { BadRequestException, NotFoundException } from '../../help/exception';
 export class UserService {
     constructor(private prisma: PrismaService) {}
 
+    // ADMIN: Lấy tất cả user (raw SQL) với filter + paginate
+    async getAllUsersWithPaginate(role?: Role, search?: string, page = 1, pageSize = 5) {
+      type UserRow = { id: number; code: string; fullName: string; role: Role; status: UserStatus };
+
+      const safePage = Math.max(1, page || 1);
+      const safePageSize = Math.max(1, Math.min(pageSize || 5, 100));
+      const offset = (safePage - 1) * safePageSize;
+
+      let baseSql = `FROM users`;
+      const whereParts: string[] = [];
+      const params: any[] = [];
+
+      if (role) {
+        whereParts.push(`role = ?`);
+        params.push(role);
+      }
+
+      if (search) {
+        whereParts.push(`(code LIKE ? OR fullName LIKE ?)`);
+        params.push(`%${search}%`, `%${search}%`);
+      }
+
+      if (whereParts.length) {
+        baseSql += ` WHERE ${whereParts.join(' AND ')}`;
+      }
+
+      const countSql = `SELECT COUNT(*) as total ${baseSql}`;
+      const rowsSql = `SELECT id, code, fullName, role, status ${baseSql} ORDER BY role DESC, id DESC LIMIT ? OFFSET ?`;
+
+      const [data, countRows] = await this.prisma.$transaction([
+        this.prisma.$queryRawUnsafe<UserRow[]>(rowsSql, ...params, safePageSize, offset),
+        this.prisma.$queryRawUnsafe<{ total: bigint }[]>(countSql, ...params),
+      ]);
+
+      const total = Number(countRows[0]?.total ?? 0);
+
+      return {
+        data,
+        total,
+        page: safePage,
+        pageSize: safePageSize,
+      };
+    }
+
+    // Lấy tất cả User
+    async getAllUsers() {
+      return await this.prisma.user.findMany({
+        where: {
+          role: { in: [Role.STUDENT, Role.TEACHER] },
+        },
+        select: {
+          id: true,
+          code: true,
+          fullName: true,
+          role: true,
+          status: true,
+        },
+        orderBy: { id: 'asc' },
+      });
+    }
+
     // Tự động tạo mã định danh theo Role
     private async generateCode(role: Role): Promise<string> {
       const prefix = role === Role.STUDENT ? 'SV' : 'GV';
@@ -117,6 +178,24 @@ export class UserService {
       return await this.prisma.userClass.findMany({
         where: {
           classID,
+          user: { role: Role.STUDENT },
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              fullName: true,
+              code: true,
+            },
+          },
+        },
+      });
+    }
+
+    // ADMIN và Teacher: Lấy tất cả thông tin Student theo Class
+    async getAllStudents(){
+      return await this.prisma.userClass.findMany({
+        where: {
           user: { role: Role.STUDENT },
         },
         include: {

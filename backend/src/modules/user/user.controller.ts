@@ -1,11 +1,41 @@
 import { UserStatus } from '../../help/constant';
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, DefaultValuePipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ChangePasswordDTO, CreateUserDTO, UpdateUserDTO } from './dto';
+import { Role } from '../../help/constant';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  // ADMIN: Lấy danh sách user với filter role / search code, fullName
+  @Get("/paginate")
+  async getAllUsersWithPaginate(
+    @Query('role') role?: Role,
+    @Query('search') search?: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
+    @Query('pageSize', new DefaultValuePipe(5), ParseIntPipe) pageSize?: number,
+  ) {
+    const result = await this.userService.getAllUsersWithPaginate(role, search, page, pageSize);
+    return {
+      success: true,
+      data: result.data,
+      meta: {
+        total: result.total,
+        page: result.page,
+        pageSize: result.pageSize,
+      },
+    };
+  }
+
+  @Get()
+  async getAllUsers() {
+    const users = await this.userService.getAllUsers();
+    return {
+      success: true,
+      data: users,
+    };
+  }
 
   // ADMIN: Thêm mới một User 
   @Post()
@@ -76,6 +106,16 @@ export class UserController {
   @Get('/students')
   async getStudentByClass(@Query('classID', ParseIntPipe) classID: number) {
     const students = await this.userService.getStudentsByClass(classID);
+    return {
+      success: true,
+      data: students,
+    };
+  }
+
+  // ADMIN: Lấy tất cả thông tin Student
+  @Get('/students/all')
+  async getAllStudent(){
+    const students = await this.userService.getAllStudents();
     return {
       success: true,
       data: students,
