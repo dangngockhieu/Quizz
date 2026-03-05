@@ -125,9 +125,9 @@ const ManageClassesAdmin = () => {
               {classes.length === 0 ? (
                 <tr><td colSpan={7} className="empty-state"><span className="empty-state__text">Chưa có lớp học nào</span></td></tr>
               ) : (
-                classes.map((c) => (
+                classes.map((c, index) => (
                   <tr key={c.id}>
-                    <td><strong>#{c.id}</strong></td>
+                    <td><strong>#{index+1}</strong></td>
                     <td>{c.name}</td>
                     <td className="admin-classes__desc">
                       {c.description || '—'}

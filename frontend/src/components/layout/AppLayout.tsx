@@ -23,6 +23,7 @@ const roleMenus: Record<string, MenuItem[]> = {
   ],
   TEACHER: [
     { to: '/teacher', label: 'Dashboard', icon: <FiHome /> },
+    { to: '/teacher/classes', label: 'Lớp của tôi', icon: <FiBookOpen /> },
     { to: '/teacher/quizzes', label: 'Quản lý Quiz', icon: <FiFileText /> },
     { to: '/teacher/scores', label: 'Tổng hợp điểm', icon: <FiBarChart2 /> },
   ],
