@@ -1,15 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Req, UnauthorizedException } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { CreateQuizDTO } from './dto';
 import { CreateOptionData, CreateQuestionWithOptionsData } from './interface';
+import { Request } from 'express';
+import { Roles } from 'src/auth/decorator/roles';
 
 @Controller('quizzes')
 export class QuizController {
   constructor(private readonly quizService: QuizService) {}
 
   @Post()
-  async createQuiz(@Body() body: CreateQuizDTO) {
-    const quiz = await this.quizService.createQuiz(body);
+  @Roles('TEACHER')
+  async createQuiz(@Body() body: CreateQuizDTO, @Req() req: Request) {
+    const teacherID = Number((req as any)?.user?.id);
+    if (!teacherID) throw new UnauthorizedException();
+
+    const quiz = await this.quizService.createQuiz(body, teacherID);
     return {
       success: true,
       message: 'Tạo quiz thành công',
@@ -18,8 +24,12 @@ export class QuizController {
   }
 
   @Put('/:id')
-  async updateQuiz(@Param('id') id: number, @Body() body: CreateQuizDTO) {
-    const quiz = await this.quizService.updateQuiz(id, body);
+  @Roles('TEACHER')
+  async updateQuiz(@Param('id', ParseIntPipe) id: number, @Body() body: CreateQuizDTO, @Req() req: Request) {
+    const teacherID = Number((req as any)?.user?.id);
+    if (!teacherID) throw new UnauthorizedException();
+
+    const quiz = await this.quizService.updateQuiz(id, body, teacherID);
     return {
       success: true,
       message: 'Cập nhật quiz thành công',
@@ -27,17 +37,36 @@ export class QuizController {
     };
   }
 
-  @Post('/:quizID/questions')
-  async createQuestion(@Param('quizID') quizID: number, @Body() question: CreateQuestionWithOptionsData) {
-    const result = await this.quizService.createQuestion(quizID, question);
+  @Get('/forTeacher')
+  @Roles('TEACHER')
+  async getMyQuizzes(@Req() req: Request) {
+    const teacherID = Number((req as any)?.user?.id);
+    if (!teacherID) throw new UnauthorizedException();
+
+    const quizzes = await this.quizService.getMyQuizzes(teacherID);
     return {
       success: true,
-      message: 'Tạo câu hỏi thành công',
-      data: result,
+      message: 'Lấy danh sách quiz thành công',
+      data: quizzes,
     };
   }
 
-  @Post('/:quizID/questions/bulk')
+  @Get('/:id')
+  @Roles('TEACHER')
+  async getQuizDetail(@Param('id', ParseIntPipe) id: number, @Req() req: Request) {
+    const teacherID = Number((req as any)?.user?.id);
+    if (!teacherID) throw new UnauthorizedException();
+
+    const quiz = await this.quizService.getQuizDetailForTeacher(id, teacherID);
+    return {
+      success: true,
+      message: 'Lấy chi tiết quiz thành công',
+      data: quiz,
+    };
+  }
+
+  @Post('/:quizID/questions')
+  @Roles('TEACHER')
   async createQuestionWithOptions(@Param('quizID') quizID: number, @Body() questions: CreateQuestionWithOptionsData[]) {
     const result = await this.quizService.createQuestionsWithOptions(quizID, questions);
     return {
@@ -47,42 +76,20 @@ export class QuizController {
     };
   }
 
-  @Put('/questions/:id')
-  async updateQuestion(@Param('id') id: number, @Body() question: CreateQuestionWithOptionsData) {
-    const result = await this.quizService.updateQuestion(id, question);
-    return {
-      success: true,
-      message: 'Cập nhật câu hỏi và options thành công',
-      data: result,
-    };
-  }
+  @Put('/:quizID/questions/sync')
+  @Roles('TEACHER')
+  async syncQuestions(
+    @Param('quizID', ParseIntPipe) quizID: number,
+    @Body() questions: CreateQuestionWithOptionsData[],
+    @Req() req: Request,
+  ) {
+    const teacherID = Number((req as any)?.user?.id);
+    if (!teacherID) throw new UnauthorizedException();
 
-  @Post('/questions/:questionID/options')
-  async createOption(@Param('questionID') questionID: number, @Body() body: CreateOptionData) {
-    const result = await this.quizService.createOption(questionID, body);
+    const result = await this.quizService.syncQuestionsForQuiz(quizID, teacherID, questions);
     return {
       success: true,
-      message: 'Tạo option thành công',
-      data: result,
-    };
-  }
-
-  @Post('/questions/:questionID/options/bulk')
-  async createOptionsForQuestion(@Param('questionID') questionID: number, @Body() body: CreateOptionData[]) {
-    const result = await this.quizService.createOptionsForQuestion(questionID, body);
-    return {
-      success: true,
-      message: 'Tạo option thành công',
-      data: result,
-    };
-  }
-
-  @Put('/options/:id')
-  async updateOption(@Param('id') id: number, @Body() body: CreateOptionData) {
-    const result = await this.quizService.updateOption(id, body);
-    return {
-      success: true,
-      message: 'Cập nhật option thành công',
+      message: 'Đồng bộ câu hỏi thành công',
       data: result,
     };
   }

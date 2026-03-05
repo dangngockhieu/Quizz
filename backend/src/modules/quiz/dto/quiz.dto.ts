@@ -1,13 +1,5 @@
 import { IsNotEmpty, IsString } from "class-validator";
-import { QuestionType, QuizTypeResult } from '../../../help/constant';
-export class QuizDTO {
-    @IsString()
-    @IsNotEmpty({ message: 'Tên không được để trống' })
-    name: string;
-    @IsString()
-    @IsNotEmpty({ message: 'Mô tả không được để trống' })
-    description: string;
-}
+import { QuizTypeResult } from '../../../help/constant';
 
 export class CreateQuizDTO {
     @IsString()

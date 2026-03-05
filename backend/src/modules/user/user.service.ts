@@ -133,25 +133,6 @@ export class UserService {
       });
     }
 
-    // User tự đổi mật khẩu
-    async changePasswordUser(id: number, oldPassword: string, newPassword: string) {
-      const user = await this.prisma.user.findUnique({ where: { id } });
-      if (!user) {
-        throw new NotFoundException('User không tồn tại');
-      }
-      const isMatch = await argon.verify(user.password, oldPassword);
-      if (!isMatch) {
-        throw new BadRequestException('Mật khẩu cũ không đúng');
-      }
-      const hashedPassword = await argon.hash(newPassword);
-      return await this.prisma.user.update({
-        where: { id },
-        data: {
-          password: hashedPassword,
-        },
-      });
-    }
-
     // ADMIN: Update Đổi Mật khẩu một User nếu họ quên và yêu cầu reset mật khẩu
     async updatePasswordUserForAdmin(id: number, newPassword: string) {
       const password = await argon.hash(newPassword);
@@ -173,73 +154,22 @@ export class UserService {
       });
     }
 
-    // ADMIN và Teacher: Lấy tất cả thông tin Student theo Class
-    async getStudentsByClass(classID: number){
-      return await this.prisma.userClass.findMany({
-        where: {
-          classID,
-          user: { role: Role.STUDENT },
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              fullName: true,
-              code: true,
-            },
-          },
-        },
-      });
-    }
-
-    // ADMIN và Teacher: Lấy tất cả thông tin Student theo Class
-    async getAllStudents(){
-      return await this.prisma.userClass.findMany({
-        where: {
-          user: { role: Role.STUDENT },
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              fullName: true,
-              code: true,
-            },
-          },
+    // User tự đổi mật khẩu
+    async changePasswordUser(id: number, oldPassword: string, newPassword: string) {
+      const user = await this.prisma.user.findUnique({ where: { id } });
+      if (!user) {
+        throw new NotFoundException('User không tồn tại');
+      }
+      const isMatch = await argon.verify(user.password, oldPassword);
+      if (!isMatch) {
+        throw new BadRequestException('Mật khẩu cũ không đúng');
+      }
+      const hashedPassword = await argon.hash(newPassword);
+      return await this.prisma.user.update({
+        where: { id },
+        data: {
+          password: hashedPassword,
         },
       });
     }
-
-    // ADMIN: Lấy tất cả thông tin Teacher
-    async getAllTeachers(){
-      return await this.prisma.user.findMany({
-        where: { role: Role.TEACHER },
-        select: {
-          id: true,
-          fullName: true,
-          code: true,
-        },
-      });
-    }
-
-    // ADMIN và Teacher: Lấy tất cả thông tin Teacher theo Class
-    async getTeachersByClass(classID: number){
-      return await this.prisma.userClass.findMany({
-        where: {
-          classID,
-          user: { role: Role.TEACHER },
-        },
-        include: {
-          user: {
-            select: {
-              id: true,
-              fullName: true,
-              code: true,
-            },
-          },
-        },
-      });
-    }
-
-
 }

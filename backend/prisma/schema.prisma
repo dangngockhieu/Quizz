@@ -40,6 +40,8 @@ model User {
   role         Role
   status       UserStatus @default(ACTIVE)
 
+  teacherQuizzes Quiz[]
+
   classes  UserClass[]
   attempts Attempt[]
 
@@ -77,6 +79,8 @@ model Quiz {
   timeLimit    Int
   typeResult   QuizTypeResult
   countAttempt Int            @default(1)
+  teacherID    Int
+  teacher      User           @relation(fields: [teacherID], references: [id], onDelete: Cascade)
 
   questions    Question[]
   attempts     Attempt[]
@@ -97,7 +101,7 @@ model ClassQuiz {
 }
 
 model Question {
-  id      Int          @id @default(autoincrement())
+  id      String       @id
   quizID  Int
   content String
   type    QuestionType
@@ -110,8 +114,8 @@ model Question {
 }
 
 model Option {
-  id         Int     @id @default(autoincrement())
-  questionID Int
+  id         String  @id
+  questionID String
   content    String
   isCorrect  Boolean
 
@@ -139,10 +143,10 @@ model Attempt {
 }
 
 model AttemptAnswer {
-  id         Int @id @default(autoincrement())
+  id         Int    @id @default(autoincrement())
   attemptID  Int
-  questionID Int
-  optionID   Int
+  questionID String
+  optionID   String
 
   isCorrect Boolean?
   score     Float?

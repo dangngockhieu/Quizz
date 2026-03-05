@@ -6,6 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { UnauthorizedException } from '../help/exception';
 import { Public } from './decorator/customize';
+import { Roles } from './decorator/roles';
 
 @Controller('auth')
 export class AuthController {
@@ -103,6 +104,7 @@ export class AuthController {
   }
 
   @Patch('reset-password')
+  @Roles('ADMIN')
   async resetPassword(@Req() req: Request) {
     const code= req.body.code;
     const newPassword = req.body.newPassword;

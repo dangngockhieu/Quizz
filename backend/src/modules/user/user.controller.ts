@@ -101,44 +101,4 @@ export class UserController {
       message: 'Cập nhật trạng thái người dùng thành công',
     };
   }
-
-  // ADMIN và Teacher: Lấy tất cả thông tin Student theo Class
-  @Get('/students')
-  async getStudentByClass(@Query('classID', ParseIntPipe) classID: number) {
-    const students = await this.userService.getStudentsByClass(classID);
-    return {
-      success: true,
-      data: students,
-    };
-  }
-
-  // ADMIN: Lấy tất cả thông tin Student
-  @Get('/students/all')
-  async getAllStudent(){
-    const students = await this.userService.getAllStudents();
-    return {
-      success: true,
-      data: students,
-    };
-  }
-
-  // ADMIN: Lấy tất cả thông tin Teacher
-  @Get('/teachers')
-  async getAllTeacher(){
-    const teachers = await this.userService.getAllTeachers();
-    return {
-      success: true,
-      data: teachers,
-    };
-  }
-
-
-  async getTeachersByClass(@Query('classID', ParseIntPipe) classID: number) {
-    const teachers = await this.userService.getTeachersByClass(classID);
-    return {
-      success: true,
-      data: teachers,
-    };
-  }
-
 }
