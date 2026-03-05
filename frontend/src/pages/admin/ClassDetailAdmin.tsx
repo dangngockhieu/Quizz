@@ -6,7 +6,7 @@ import {
 } from '../../services/apiServices';
 import { toast } from 'react-toastify';
 import './AdminTheme.scss';
-import './ClassDetail.scss';
+import './ClassDetailAdmin.scss';
 
 interface User { id: number; code: string; fullName: string; role: string; status: string }
 interface Quiz { id: number; title: string; timeStart: string; timeEnd: string }
@@ -18,7 +18,7 @@ interface ClassDetail {
   classQuizzes: { classID: number; quizID: number; quiz: Quiz }[];
 }
 
-const ClassDetailPage = () => {
+const ClassDetailAdmin = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [classData, setClassData] = useState<ClassDetail | null>(null);
@@ -182,4 +182,4 @@ const ClassDetailPage = () => {
   );
 };
 
-export default ClassDetailPage;
+export default ClassDetailAdmin;

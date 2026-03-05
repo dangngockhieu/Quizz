@@ -4,7 +4,7 @@ import { getAllClasses, createClass, updateClass } from '../../services/apiServi
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import './AdminTheme.scss';
-import './ManageClasses.scss';
+import './ManageClassesAdmin.scss';
 
 interface ClassItem {
   id: number;
@@ -15,7 +15,7 @@ interface ClassItem {
   quizCount?: number;
 }
 
-const ManageClasses = () => {
+const ManageClassesAdmin = () => {
   const navigate = useNavigate();
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [search, setSearch] = useState('');
@@ -211,4 +211,4 @@ const ManageClasses = () => {
   );
 };
 
-export default ManageClasses;
+export default ManageClassesAdmin;

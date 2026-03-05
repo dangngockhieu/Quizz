@@ -1,11 +1,12 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { doLogout } from '../../redux/userSlice';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   FiMenu, FiX, FiHome, FiUsers, FiBookOpen,
   FiFileText, FiBarChart2, FiLogOut, FiEdit3, FiClipboard
 } from 'react-icons/fi';
+import ChangePassword from './ChangePassword';
 import './Layout.scss';
 
 interface MenuItem {
@@ -44,14 +45,39 @@ const AppLayout = () => {
   const { account } = useAppSelector((state) => state.user);
   const role = (account?.role as string) || 'STUDENT';
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userCardOpen, setUserCardOpen] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement | null>(null);
 
   const menus = roleMenus[role] || [];
   const title = roleTitles[role] || 'LMS';
+  const userInitial = (account?.fullName as string)?.charAt(0)?.toUpperCase() || 'U';
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserCardOpen(false);
+      }
+    };
+
+    if (userCardOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [userCardOpen]);
 
   const handleLogout = () => {
     dispatch(doLogout());
     localStorage.removeItem('accessToken');
     navigate('/login');
+  };
+
+  const handleOpenChangePassword = () => {
+    setUserCardOpen(false);
+    setShowChangePassword(true);
   };
 
   return (
@@ -110,6 +136,41 @@ const AppLayout = () => {
           </button>
           <div className="topbar__right">
             <span className="topbar__greeting">Xin chào, <strong>{account?.fullName as string}</strong></span>
+            <div className="topbar__user-wrapper" ref={userMenuRef}>
+              <button className="topbar__user" onClick={() => setUserCardOpen((prev) => !prev)}>
+                <span className="topbar__avatar">{userInitial}</span>
+                <div className="topbar__user-meta">
+                  <span className="topbar__user-name">{account?.fullName as string}</span>
+                  <span className="topbar__user-role">{role}</span>
+                </div>
+              </button>
+
+              {userCardOpen && (
+                <div className="topbar__user-card">
+                  <div className="topbar__user-card-header">
+                    <div className="topbar__user-card-avatar">{userInitial}</div>
+                    <div>
+                      <div className="topbar__user-card-name">{account?.fullName as string}</div>
+                      <div className="topbar__user-card-role">{role}</div>
+                    </div>
+                  </div>
+
+                  <div className="topbar__user-info">
+                    <div className="topbar__user-info-row">
+                      <span>Mã</span>
+                      <span>{account?.code ?? 'N/A'}</span>
+                    </div>
+                  </div>
+
+                  <button className="topbar__action topbar__action--primary" onClick={handleOpenChangePassword}>
+                    Đổi mật khẩu
+                  </button>
+                  <button className="topbar__action" onClick={() => setUserCardOpen(false)}>
+                    Đóng
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </header>
 
@@ -117,6 +178,10 @@ const AppLayout = () => {
           <Outlet />
         </main>
       </div>
+
+      {showChangePassword && (
+        <ChangePassword onClose={() => setShowChangePassword(false)} />
+      )}
     </div>
   );
 };

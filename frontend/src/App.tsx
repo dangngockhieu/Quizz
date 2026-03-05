@@ -7,8 +7,10 @@ import AppLayout from './components/layout/AppLayout';
 // Admin pages
 import AdminDashboard from './pages/admin/Dashboard';
 import ManageUsers from './pages/admin/ManageUsers';
-import ManageClasses from './pages/admin/ManageClasses';
-import ClassDetailPage from './pages/admin/ClassDetail';
+import ManageClassesAdmin from './pages/admin/ManageClassesAdmin';
+import ClassDetailAdmin from './pages/admin/ClassDetailAdmin';
+
+
 
 function App() {
 
@@ -22,10 +24,11 @@ function App() {
         <Route element={<AppLayout />}>
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<ManageUsers />} />
-          <Route path="/admin/classes" element={<ManageClasses />} />
-          <Route path="/admin/classes/:id" element={<ClassDetailPage />} />
+          <Route path="/admin/classes" element={<ManageClassesAdmin />} />
+          <Route path="/admin/classes/:id" element={<ClassDetailAdmin />} />
         </Route>
       </Route>
+
     </Routes>
   )
 }
