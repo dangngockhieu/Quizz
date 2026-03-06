@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, ParseIntPipe, Post, Put, Req, UnauthorizedException } from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import { CreateQuizDTO } from './dto';
-import { CreateOptionData, CreateQuestionWithOptionsData } from './interface';
+import { CreateQuestionWithOptionsData } from './interface';
 import { Request } from 'express';
 import { Roles } from 'src/auth/decorator/roles';
 
@@ -19,7 +19,7 @@ export class QuizController {
     return {
       success: true,
       message: 'Tạo quiz thành công',
-      data: quiz,
+      data: quiz
     };
   }
 
@@ -33,7 +33,7 @@ export class QuizController {
     return {
       success: true,
       message: 'Cập nhật quiz thành công',
-      data: quiz,
+      data: quiz
     };
   }
 
@@ -47,7 +47,7 @@ export class QuizController {
     return {
       success: true,
       message: 'Lấy danh sách quiz thành công',
-      data: quizzes,
+      data: quizzes
     };
   }
 
@@ -61,7 +61,7 @@ export class QuizController {
     return {
       success: true,
       message: 'Lấy chi tiết quiz thành công',
-      data: quiz,
+      data: quiz
     };
   }
 
@@ -72,7 +72,7 @@ export class QuizController {
     return {
       success: true,
       message: 'Tạo câu hỏi và options thành công',
-      data: result,
+      data: result
     };
   }
 
@@ -90,7 +90,7 @@ export class QuizController {
     return {
       success: true,
       message: 'Đồng bộ câu hỏi thành công',
-      data: result,
+      data: result
     };
   }
 

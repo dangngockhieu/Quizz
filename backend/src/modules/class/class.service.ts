@@ -57,13 +57,13 @@ export class ClassService {
     }
 
     // TEACHER: Lấy tất cả khóa học của teacher hiện tại (có phân trang + search + đếm teacher/student/quiz)
-    async getAllClassesforUserWithPaginate(userID: number, search?: string, page = 1, pageSize = 5){
+    async getAllClassesforTeacherWithPaginate(teacherID: number, search?: string, page = 1, pageSize = 5){
       const safePage = Math.max(1, page || 1);
       const safePageSize = Math.max(1, Math.min(pageSize || 5, 100));
 
       const where = {
         users: {
-          some: { userID: userID }, 
+          some: { userID: teacherID }, 
         },
         ...(search ? { name: { contains: search } } : {}),
       };
@@ -98,6 +98,24 @@ export class ClassService {
         pageSize: safePageSize,
       };
     }
+
+    // STUDENT: Lấy tất cả khóa học của student hiện tại 
+    async getAllClassesforStudent(studentID: number){
+      const where = {
+        users: {
+          some: { userID: studentID }, 
+        }
+      };
+
+      const classes = await this.prisma.class.findMany({
+          where,
+          orderBy: { id: 'desc' }
+        })
+
+      return {
+        data: classes
+        }
+      };
 
     // ADMIN: Lấy khóa học theo ID (kèm thành viên và bài thi)
     async getClassByID(id: number){
@@ -200,6 +218,22 @@ export class ClassService {
         data: {
           classID,
           quizID,
+        },
+      });
+    }
+
+    // ADMIN: Number of classes
+    async countClasses() {
+      return await this.prisma.class.count();
+    }
+
+    // Teacher: Number of classes of teacher
+    async countClassesOfUser(userID: number) {
+      return await this.prisma.class.count({
+        where: {
+          users: {
+            some: { userID: userID},
+          },
         },
       });
     }

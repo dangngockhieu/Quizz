@@ -1,4 +1,4 @@
-import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Post, Put, Query, Req } from '@nestjs/common';
 import { ClassService } from './class.service';
 import { CreateClassDTO } from './dto/class.dto';
 import { Roles } from 'src/auth/decorator/roles';
@@ -15,7 +15,7 @@ export class ClassController {
       return {
         success: true,
         message: 'Tạo lớp học thành công',
-        data: classes,
+        data: classes
       };
     }
 
@@ -32,24 +32,69 @@ export class ClassController {
         success: true,
         message: 'Lấy danh sách lớp học thành công',
         data: result.data,
-        meta: { total: result.total, page: result.page, pageSize: result.pageSize },
+        meta:{ 
+          total: result.total, 
+          page: result.page, 
+          pageSize: result.pageSize 
+        },
       };
     }
 
-    // TEACHER/STUDENT: Lấy tất cả khóa học (có search + paginate) 
-    @Get('user/:userID')
-    async getAllClassesforUser(@Param('userID', ParseIntPipe) userID: number,
-      @Query('search') search?: string,
+    // TEACHER: Lấy tất cả khóa học (có search + paginate) 
+    @Get('teacher')
+    @Roles('TEACHER')
+    async getAllClassesforTeacher(@Req() req: Request,
+    @Query('search') search?: string,
       @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
       @Query('pageSize', new DefaultValuePipe(5), ParseIntPipe) pageSize?: number,
     ){
-      const result = await this.classService.getAllClassesforUserWithPaginate(userID, search, page, pageSize);
+      const teacherID = Number((req as any)?.user?.id);
+      const result = await this.classService.getAllClassesforTeacherWithPaginate(teacherID, search, page, pageSize);
       return {
         success: true,
         message: 'Lấy danh sách lớp học thành công',
         data: result.data,
-        meta: { total: result.total, page: result.page, pageSize: result.pageSize },
+        meta:{ 
+          total: result.total, 
+          page: result.page, 
+          pageSize: result.pageSize 
+        },
       };
+    }
+
+    @Get('/student')
+    @Roles('STUDENT')
+    async getAllClassesforStudent(@Req() req: Request){
+      const studentID = Number((req as any)?.user?.id);
+      const result = await this.classService.getAllClassesforStudent(studentID);
+      return {
+        success: true,
+        message: 'Lấy danh sách lớp học thành công',
+        data: result,
+      };
+    }
+
+    // ADMIN: Lấy số lượng lớp học    
+    @Get('/count')
+    @Roles('ADMIN')
+    async countClasses() {
+      const count = await this.classService.countClasses();
+      return {
+        success: true,
+        data: count,
+      };
+    }
+
+    // User: Lấy số lượng lớp học của user  
+    @Get('/count-of-user')
+    @Roles('TEACHER', 'STUDENT')
+    async countClassesOfUser(@Req() req: Request) {
+      const userID = Number((req as any)?.user?.id);
+      const count = await this.classService.countClassesOfUser(userID);
+      return {
+        success: true,
+        data: count,
+       };
     }
 
     // ADMIN: Lấy khóa học theo ID
@@ -59,7 +104,7 @@ export class ClassController {
       return {
         success: true,
         message: 'Lấy thông tin lớp học thành công',
-        data: classes,
+        data: classes 
       };
     }
 
@@ -74,7 +119,7 @@ export class ClassController {
       return {
         success: true,
         message: 'Cập nhật lớp học thành công',
-        data: classes,
+        data: classes
       };
      }
 
@@ -89,7 +134,7 @@ export class ClassController {
       return {
         success: true,
         message: 'Thêm người dùng vào lớp học thành công',
-        data: result,
+        data: result
        };
      }
 
@@ -104,7 +149,7 @@ export class ClassController {
         return {
           success: true,
           message: 'Xóa người dùng khỏi lớp học thành công',
-          data: result,
+          data: result
         };
        }
 
@@ -115,7 +160,7 @@ export class ClassController {
       return {
         success: true,
         message: 'Thêm quiz vào lớp học thành công',
-        data: result,
+        data: result 
       };
     }
 

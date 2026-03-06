@@ -1,6 +1,6 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../help/prisma/prisma.service';
-import { CreateQuestionData, CreateQuizData, CreateOptionData, CreateQuestionWithOptionsData } from './interface';
+import { CreateQuizData, CreateQuestionWithOptionsData } from './interface';
 
 
 @Injectable()

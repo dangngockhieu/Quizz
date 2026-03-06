@@ -3,6 +3,7 @@ import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, Default
 import { UserService } from './user.service';
 import { ChangePasswordDTO, CreateUserDTO, UpdateUserDTO } from './dto';
 import { Role } from '../../help/constant';
+import { Roles } from 'src/auth/decorator/roles';
 
 @Controller('users')
 export class UserController {
@@ -10,6 +11,7 @@ export class UserController {
 
   // ADMIN: Lấy danh sách user với filter role / search code, fullName
   @Get("/paginate")
+  @Roles('ADMIN')
   async getAllUsersWithPaginate(
     @Query('role') role?: Role,
     @Query('search') search?: string,
@@ -20,7 +22,7 @@ export class UserController {
     return {
       success: true,
       data: result.data,
-      meta: {
+      meta:{ 
         total: result.total,
         page: result.page,
         pageSize: result.pageSize,
@@ -29,16 +31,18 @@ export class UserController {
   }
 
   @Get()
+  @Roles('ADMIN')
   async getAllUsers() {
     const users = await this.userService.getAllUsers();
     return {
       success: true,
-      data: users,
+      data: users
     };
   }
 
   // ADMIN: Thêm mới một User 
   @Post()
+  @Roles('ADMIN')
   async createUser(@Body() body: CreateUserDTO) {
     const { fullName, role } = body;
     await this.userService.createUser(fullName, role);
@@ -50,6 +54,7 @@ export class UserController {
 
   // ADMIN: Update thông tin một User
   @Patch('/:id')
+  @Roles('ADMIN')
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() body: UpdateUserDTO,
@@ -78,6 +83,7 @@ export class UserController {
 
   // ADMIN: Update Đổi Mật khẩu một User nếu họ quên và yêu cầu reset mật khẩu
   @Patch('/:id/reset-password')
+  @Roles('ADMIN')
   async updatePasswordUserForAdmin(
     @Param('id', ParseIntPipe) id: number,
     @Body('newPassword') newPassword: string,
@@ -91,6 +97,7 @@ export class UserController {
 
   // ADMIN: Update status một User
   @Patch('/:id/status')
+  @Roles('ADMIN')
   async updateStatusUser(
     @Param('id', ParseIntPipe) id: number,
     @Body('status') status: UserStatus,
@@ -99,6 +106,17 @@ export class UserController {
     return {
       success: true,
       message: 'Cập nhật trạng thái người dùng thành công',
+    };
+  }
+
+  // ADMIN: Lấy số lượng User
+  @Get('/count')
+  @Roles('ADMIN')
+  async countUsers() {
+    const count = await this.userService.countUsers();
+    return {
+      success: true,
+      data: count,
     };
   }
 }

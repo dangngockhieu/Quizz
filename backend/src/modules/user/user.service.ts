@@ -172,4 +172,13 @@ export class UserService {
         },
       });
     }
+
+    // ADMIN: Lấy số lượng User 
+    async countUsers() {
+      return await this.prisma.user.count({
+        where: {
+          role: { in: [Role.STUDENT, Role.TEACHER] },
+        },
+      });
+    }
 }
