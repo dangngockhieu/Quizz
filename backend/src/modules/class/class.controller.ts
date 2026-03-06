@@ -70,7 +70,7 @@ export class ClassController {
       return {
         success: true,
         message: 'Lấy danh sách lớp học thành công',
-        data: result,
+        data: result.data,
       };
     }
 
