@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { FiSearch, FiEye } from 'react-icons/fi';
-import { getAllClassesForUser } from '../../services/apiServices';
+import { getAllClassesForTeacher } from '../../services/apiServices';
 import { useNavigate } from 'react-router-dom';
 import './TeacherTheme.scss';
 import './ManageClassesTeacher.scss';
-import { useAppSelector } from '../../redux/hooks';
 
 interface ClassItem {
   id: number;
@@ -17,8 +16,6 @@ interface ClassItem {
 
 const ManageClassesTeacher = () => {
   const navigate = useNavigate();
-  const { account } = useAppSelector((state) => state.user);
-  const userId = account?.id ? Number(account.id) : 0;
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -26,21 +23,19 @@ const ManageClassesTeacher = () => {
   const [total, setTotal] = useState(0);
 
   const load = useCallback(async (searchArg?: string, pageArg?: number) => {
-    if (!userId) return;
     try {
       const targetPage = pageArg ?? page;
-      const res = await getAllClassesForUser(userId, searchArg ?? search, targetPage, pageSize);
+      const res = await getAllClassesForTeacher(searchArg ?? search, targetPage, pageSize);
       setClasses(res?.data?.data || []);
-      setTotal(res?.data?.meta?.total ?? 0);
-      setPage(res?.data?.meta?.page ?? targetPage);
+      setTotal(res?.data?.data?.total ?? 0);
+      setPage(res?.data?.data?.page ?? targetPage);
     } catch { /* ignore */ }
-  }, [userId, search, page, pageSize]);
+  }, [search, page, pageSize]);
 
   useEffect(() => {
-    if (!userId) return;
     const timer = setTimeout(() => { void load('', 1); }, 0);
     return () => clearTimeout(timer);
-  }, [load, userId]);
+  }, [load]);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const currentPage = Math.min(page, totalPages);

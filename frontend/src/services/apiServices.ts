@@ -85,15 +85,29 @@ export const removeUserFromClass = (classID: number, userID: number) => {
   return axios.delete(`/classes/${classID}/users/${userID}`);
 };
 
-// ===== USER =====
+export const numberClass = () => {
+  return axios.get('/classes/count');
+};
 
-export const getAllClassesForUser = (userID: number, search?: string, page?: number, pageSize?: number) => {
+export const numberUser = () => {
+  return axios.get('/users/count');
+}
+// ===== USER =====
+export const numberClassForUser = () => {
+  return axios.get('/classes/count-of-user');
+}
+
+export const getAllClassesForStudent = () => {
+  return axios.get('/classes/student');
+}
+
+export const getAllClassesForTeacher = (search?: string, page?: number, pageSize?: number) => {
   const query = new URLSearchParams();
   if (search) query.append('search', search);
   if (page) query.append('page', String(page));
   if (pageSize) query.append('pageSize', String(pageSize));
   const qs = query.toString();
-  return axios.get(`/classes/user/${userID}${qs ? `?${qs}` : ''}`);
+  return axios.get(`/classes/teacher${qs ? `?${qs}` : ''}`);
 };
 
 export const getUsersInClass = (classID: number) => {

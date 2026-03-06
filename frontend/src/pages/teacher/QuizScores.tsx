@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FiSearch } from 'react-icons/fi';
 import { useSearchParams } from 'react-router-dom';
-import { getAllClassesForUser, getAllQuizzesForTeacher, getQuizScoresByClass } from '../../services/apiServices';
-import { useAppSelector } from '../../redux/hooks';
+import { getAllClassesForTeacher, getAllQuizzesForTeacher, getQuizScoresByClass } from '../../services/apiServices';
 import '../../styles/pages.scss';
 
 interface ClassItem { id: number; name: string }
@@ -15,8 +14,6 @@ interface Score {
 }
 
 const QuizScores = () => {
-  const { account } = useAppSelector((state) => state.user);
-  const userId = account?.id ? Number(account.id) : 0;
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [quizzes, setQuizzes] = useState<QuizItem[]>([]);
   const [selectedClass, setSelectedClass] = useState<number>(0);
@@ -29,7 +26,7 @@ const QuizScores = () => {
     const load = async () => {
       try {
         const [cRes, qRes] = await Promise.all([
-          userId ? getAllClassesForUser(userId) : Promise.resolve({ data: { data: [] } }),
+          getAllClassesForTeacher() ,
           getAllQuizzesForTeacher(),
         ]);
         setClasses(cRes?.data?.data || []);
@@ -49,7 +46,7 @@ const QuizScores = () => {
       } catch { /* ignore */ }
     };
     load();
-  }, [userId, searchParams]);
+  }, [searchParams]);
 
   const handleSearch = async () => {
     if (!selectedClass || !selectedQuiz) return;

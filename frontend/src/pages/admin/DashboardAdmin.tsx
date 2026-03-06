@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FiUsers, FiBookOpen, FiActivity } from 'react-icons/fi';
-import { getAllUsers, getAllClasses} from '../../services/apiServices';
+import { numberUser, numberClass} from '../../services/apiServices';
 import './AdminTheme.scss';
 import './AdminDashboard.scss';
 
@@ -11,12 +11,12 @@ const AdminDashboard = () => {
     const load = async () => {
       try {
         const [uRes, cRes] = await Promise.all([
-          getAllUsers(),
-          getAllClasses()
+          numberUser(),
+          numberClass()
         ]);
         setStats({
-          users: uRes?.data?.data?.length || 0,
-          classes: cRes?.data?.data?.length || 0,
+          users: uRes?.data?.data || 0,
+          classes: cRes?.data?.data || 0,
         });
       } catch { /* ignore */ }
     };

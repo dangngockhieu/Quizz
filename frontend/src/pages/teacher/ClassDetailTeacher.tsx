@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiFileText, FiChevronUp, FiChevronDown } from 'react-icons/fi';
+import { FiArrowLeft, FiFileText, FiChevronUp, FiChevronDown, FiEdit2 } from 'react-icons/fi';
 import { getClassDetail } from '../../services/apiServices';
 import './TeacherTheme.scss';
 import './ClassDetailTeacher.scss';
@@ -135,12 +135,20 @@ const ClassDetailTeacher = () => {
                         <strong>{attemptCount}</strong>
                       </td>
                       <td className="text-center">
-                        <button
-                          className="btn btn--outline btn--sm"
-                          onClick={() => navigate(`/teacher/scores?classId=${id}&quizId=${q.quizID}`)}
-                        >
-                          Xem điểm
-                        </button>
+                        <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+                          <button
+                            className="btn btn--outline btn--sm"
+                            onClick={() => navigate(`/teacher/scores?classId=${id}&quizId=${q.quizID}`)}
+                          >
+                            Xem điểm
+                          </button>
+                          <button
+                            className="btn btn--primary btn--sm"
+                            onClick={() => navigate(`/teacher/quizzes/${q.quizID}/edit`)}
+                          >
+                            <FiEdit2 /> Sửa
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );

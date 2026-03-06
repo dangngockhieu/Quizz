@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiPlus, FiEdit2, FiSearch, FiClock, FiLink } from 'react-icons/fi';
-import { getAllQuizzesForTeacher, createQuiz, updateQuiz, getAllClassesForUser, addQuizToClass } from '../../services/apiServices';
+import { getAllQuizzesForTeacher, createQuiz, updateQuiz, getAllClassesForTeacher, addQuizToClass } from '../../services/apiServices';
 import { toast } from 'react-toastify';
 import '../../styles/pages.scss';
-import { useAppSelector } from '../../redux/hooks';
 
 interface Quiz {
   id: number;
@@ -20,8 +19,6 @@ interface Quiz {
 
 const ManageQuizzes = () => {
   const navigate = useNavigate();
-  const { account } = useAppSelector((state) => state.user);
-  const userId = account?.id ? Number(account.id) : 0;
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -54,13 +51,12 @@ const ManageQuizzes = () => {
   }, [refreshKey]);
 
   useEffect(() => {
-    if (!userId) return;
     let cancelled = false;
-    getAllClassesForUser(userId)
+    getAllClassesForTeacher()
       .then(res => { if (!cancelled) setClasses(res?.data?.data ?? []); })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [userId]);
+  }, []);
 
   const filtered = quizzes.filter(q =>
     q.title.toLowerCase().includes(search.toLowerCase())

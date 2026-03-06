@@ -1,27 +1,22 @@
 import { useEffect, useState } from 'react';
 import { FiUsers} from 'react-icons/fi';
-import { getAllClassesForUser } from '../../services/apiServices';
+import { numberClassForUser } from '../../services/apiServices';
 import '../../styles/pages.scss';
-import { useAppSelector } from '../../redux/hooks';
 
 const TeacherDashboard = () => {
-  const { account } = useAppSelector((state) => state.user);
-  const id = account?.id ? Number(account.id) : 0;
-  const [stats, setStats] = useState({ classes: 0 });
+  const [classes, setClasses] = useState<number>( 0 );
 
   useEffect(() => {
-    if (!id) return;
-
     const load = async () => {
       try {
-        const classRes = await getAllClassesForUser(id);
-        setStats({
-          classes: classRes?.data?.data?.length || 0,
-        });
-      } catch { /* ignore */ }
+        const classRes = await numberClassForUser();
+        setClasses(classRes?.data?.data || 0 );
+      } catch (error) {
+        console.error('Error fetching class count:', error);
+      }
     };
     load();
-  }, [id]);
+  }, []);
 
   return (
     <div>
@@ -36,7 +31,7 @@ const TeacherDashboard = () => {
             <FiUsers size={24} color="#2e7d32" />
           </div>
           <div className="stat-card__info">
-            <span className="stat-card__value">{stats.classes}</span>
+            <span className="stat-card__value">{classes}</span>
             <span className="stat-card__label">Lớp học</span>
           </div>
         </div>
