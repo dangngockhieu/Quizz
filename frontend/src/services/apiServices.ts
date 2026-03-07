@@ -1,6 +1,8 @@
+
 import axios from '../utils/axiosCustomize';
 
-// ===== USER =====
+// ===== AUTH =====
+
 export const login = (code: string, password: string) => {
   return axios.post('/auth/login', { code, password }, { withCredentials: true });
 };
@@ -13,11 +15,16 @@ export const refreshToken = () => {
   return axios.post('/auth/refresh-token', {}, { withCredentials: true });
 };
 
+// ===== USER =====
+
 export const changePassword = (id: number, oldPassword: string, newPassword: string) => {
   return axios.patch(`/users/${id}/change-password`, { oldPassword, newPassword });
 };
 
-// ===== ADMIN =====
+export const getAllUsers = () => {
+  return axios.get('/users');
+};
+
 export const getAllUsersWithPaginate = (role?: string, search?: string, page?: number, pageSize?: number) => {
   const query = new URLSearchParams();
   if (role) query.append('role', role);
@@ -26,10 +33,6 @@ export const getAllUsersWithPaginate = (role?: string, search?: string, page?: n
   if (pageSize) query.append('pageSize', String(pageSize));
   const qs = query.toString();
   return axios.get(`/users/paginate${qs ? `?${qs}` : ''}`);
-};
-
-export const getAllUsers = () => {
-  return axios.get('/users');
 };
 
 export const createUser = (fullName: string, role: string) => {
@@ -48,13 +51,19 @@ export const resetPasswordForAdmin = (id: number, newPassword: string) => {
   return axios.patch(`/users/${id}/reset-password`, { newPassword });
 };
 
-export const getStudentsByClass = (classID: number) => {
-  return axios.get('/users/students', { params: { classID } });
+export const numberUser = () => {
+  return axios.get('/users/count');
 };
 
 export const getAllTeachers = () => {
   return axios.get('/users/teachers');
 };
+
+export const getStudentsByClass = (classID: number) => {
+  return axios.get('/users/students', { params: { classID } });
+};
+
+// ===== CLASS =====
 
 export const getAllClasses = (search?: string, page?: number, pageSize?: number) => {
   const query = new URLSearchParams();
@@ -80,7 +89,6 @@ export const updateClass = (id: number, name: string, description: string) => {
 export const addUserToClass = (classID: number, userID: number) => {
   return axios.post(`/classes/${classID}/add-user`, { userID });
 };
-
 export const removeUserFromClass = (classID: number, userID: number) => {
   return axios.delete(`/classes/${classID}/users/${userID}`);
 };
@@ -89,25 +97,8 @@ export const numberClass = () => {
   return axios.get('/classes/count');
 };
 
-export const numberUser = () => {
-  return axios.get('/users/count');
-}
-// ===== USER =====
 export const numberClassForUser = () => {
   return axios.get('/classes/count-of-user');
-}
-
-export const getAllClassesForStudent = () => {
-  return axios.get('/classes/student');
-}
-
-export const getAllClassesForTeacher = (search?: string, page?: number, pageSize?: number) => {
-  const query = new URLSearchParams();
-  if (search) query.append('search', search);
-  if (page) query.append('page', String(page));
-  if (pageSize) query.append('pageSize', String(pageSize));
-  const qs = query.toString();
-  return axios.get(`/classes/teacher${qs ? `?${qs}` : ''}`);
 };
 
 export const getUsersInClass = (classID: number) => {
@@ -122,19 +113,41 @@ export const getQuizzesByClass = (classID: number) => {
   return axios.get(`/classes/${classID}/quizzes`);
 };
 
-// ===== QUIZZES =====
+// ===== STUDENT =====
+export const getAllClassesForStudent = () => {
+  return axios.get('/classes/student');
+};
+
+export const getClassesForStudent = (classID: number) => {
+  return axios.get(`/classes/student/${classID}`);
+};
+
+export const getQuizzesforClass = (classID: number) => {
+  return axios.get(`/quizzes/class/${classID}`);
+}
+
+// ===== TEACHER =====
+
+export const getAllClassesForTeacher = (search?: string, page?: number, pageSize?: number) => {
+  const query = new URLSearchParams();
+  if (search) query.append('search', search);
+  if (page) query.append('page', String(page));
+  if (pageSize) query.append('pageSize', String(pageSize));
+  const qs = query.toString();
+  return axios.get(`/classes/teacher${qs ? `?${qs}` : ''}`);
+};
+
 export const getAllQuizzesForTeacher = () => {
   return axios.get('/quizzes/forTeacher', { withCredentials: true });
 };
 
+// ===== QUIZZES =====
 export const getQuizDetail = (id: number) => {
   return axios.get(`/quizzes/${id}`, { withCredentials: true });
 };
-
 export const getQuizForStudent = (id: number) => {
   return axios.get(`/quizzes/${id}/student`);
 };
-
 export const createQuiz = (data: {
   title: string;
   description?: string;
@@ -155,26 +168,20 @@ export const updateQuiz = (id: number, data: {
   timeLimit: number;
   typeResult: string;
   countAttempt: number;
-}) => {
-  return axios.put(`/quizzes/${id}`, data);
-};
+}) => axios.put(`/quizzes/${id}`, data);
 
 export const createQuestionsBulk = (quizID: number, questions: {
   content: string;
   type: string;
   options: { content: string; isCorrect: boolean }[];
-}[]) => {
-  return axios.post(`/quizzes/${quizID}/questions/bulk`, questions);
-};
+}[]) => axios.post(`/quizzes/${quizID}/questions/bulk`, questions);
 
 export const syncQuizQuestions = (quizID: number, questions: Array<{
   id?: string | number;
   content: string;
   type: string;
   options: Array<{ id?: string | number; content: string; isCorrect: boolean }>;
-}>) => {
-  return axios.put(`/quizzes/${quizID}/questions/sync`, questions);
-};
+}>) => axios.put(`/quizzes/${quizID}/questions/sync`, questions);
 
 export const submitQuizAttempt = (quizID: number, userID: number, answers: { questionID: number; optionID: number }[]) => {
   return axios.post(`/quizzes/${quizID}/submit`, { userID, answers });

@@ -74,6 +74,18 @@ export class ClassController {
       };
     }
 
+    @Get('/student/:classID')
+    @Roles('STUDENT')
+    async getClassesforStudent(@Req() req: Request, @Param('classID', ParseIntPipe) classID: number){
+      const studentID = Number((req as any)?.user?.id);
+      const result = await this.classService.getClassesforStudent(studentID, classID);
+      return {
+        success: true,
+        message: 'Lấy danh sách lớp học thành công',
+        data: result
+      };
+    }
+
     // ADMIN: Lấy số lượng lớp học    
     @Get('/count')
     @Roles('ADMIN')

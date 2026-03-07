@@ -18,7 +18,13 @@ import QuizScores from './pages/teacher/QuizScores';
 import ManageClassesTeacher from './pages/teacher/ManageClassesTeacher';
 import ClassDetailTeacher from './pages/teacher/ClassDetailTeacher';
 
-
+// Student pages
+import StudentDashboard from './pages/student/Dashboard';
+import QuizList from './pages/student/QuizList';
+import TakeQuiz from './pages/student/TakeQuiz';
+import ClassList from './pages/student/ClassList';
+import ClassDetail from './pages/student/ClassDetail';
+import QuizHistoryModalPage from './pages/student/QuizHistoryModalPage';
 
 
 function App() {
@@ -51,7 +57,17 @@ function App() {
         </Route>
       </Route>
 
-      
+      {/* Student routes */}
+      <Route element={<ProtectedRoute allowedRoles={['STUDENT']} />}>
+        <Route element={<AppLayout />}>
+          <Route path="/student" element={<StudentDashboard />} />
+          <Route path="/student/classes" element={<ClassList />} />
+          <Route path="/student/classes/:id" element={<ClassDetail />} />
+          <Route path="/student/quizzes" element={<QuizList />} />
+          <Route path="/student/quizzes/:id" element={<TakeQuiz />} />
+          <Route path="/student/quizzes/:id/history" element={<QuizHistoryModalPage />} />
+        </Route>
+      </Route>
     </Routes>
   )
 }

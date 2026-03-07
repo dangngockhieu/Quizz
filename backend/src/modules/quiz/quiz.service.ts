@@ -149,4 +149,43 @@ export class QuizService {
     });
   }
 
-}
+  // STUDENT: Lấy chi tiết quiz của class
+  async getQuizForClass(classID: number, studentID: number) {
+    // Kiểm tra studentID có thuộc class không
+    const isMember = await this.prisma.userClass.findFirst({
+      where: {
+        classID,
+        userID: studentID,
+      },
+    });
+    if (!isMember) {
+      throw new ForbiddenException('Bạn không thuộc lớp này');
+    }
+
+    const quizzes = await this.prisma.quiz.findMany({
+      where: {
+        classQuizzes: {
+          some: { classID },
+        },
+      }
+    });
+
+    // Bổ sung trạng thái đã hoàn thành cho từng quiz
+    const quizzesWithStatus = await Promise.all(
+      quizzes.map(async q => {
+        const attempt = await this.prisma.attempt.findFirst({
+          where: {
+            quizID: q.id,
+            userID: studentID,
+          },
+        });
+        return {
+          ...q,
+          isCompleted: !!attempt,
+        };
+      })
+    );
+
+    return quizzesWithStatus;
+  }
+} 

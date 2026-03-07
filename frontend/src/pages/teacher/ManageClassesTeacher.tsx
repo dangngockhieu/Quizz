@@ -27,8 +27,8 @@ const ManageClassesTeacher = () => {
       const targetPage = pageArg ?? page;
       const res = await getAllClassesForTeacher(searchArg ?? search, targetPage, pageSize);
       setClasses(res?.data?.data || []);
-      setTotal(res?.data?.data?.total ?? 0);
-      setPage(res?.data?.data?.page ?? targetPage);
+      setTotal(res?.data?.meta?.total ?? 0);
+      setPage(res?.data?.meta?.page ?? targetPage);
     } catch { /* ignore */ }
   }, [search, page, pageSize]);
 

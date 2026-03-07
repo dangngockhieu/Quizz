@@ -99,6 +99,23 @@ export class ClassService {
       };
     }
 
+    // STUDENT: Lấy khóa học của student hiện tại theo ID 
+    async getClassesforStudent(studentID: number, classID: number){
+      const where = {
+        users: {
+          some: { userID: studentID }, 
+        },
+        id: classID
+      };
+
+      const classes = await this.prisma.class.findUnique({
+        where
+      });
+
+
+      return classes
+    }
+
     // STUDENT: Lấy tất cả khóa học của student hiện tại 
     async getAllClassesforStudent(studentID: number){
       const where = {

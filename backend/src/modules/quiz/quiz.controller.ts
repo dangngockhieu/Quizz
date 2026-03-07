@@ -94,4 +94,17 @@ export class QuizController {
     };
   }
 
+  @Get('/class/:classID')
+  @Roles('STUDENT')
+  async getQuizForClass(@Param('classID', ParseIntPipe) classID: number, @Req() req: Request) {
+    const studentID = Number((req as any)?.user?.id);
+    if (!studentID) throw new UnauthorizedException();
+
+    const quizzes = await this.quizService.getQuizForClass(classID, studentID);
+    return {
+      success: true,
+      message: 'Lấy danh sách quiz cho lớp thành công',
+      data: quizzes
+    };
+  }
 }

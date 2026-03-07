@@ -4,7 +4,7 @@ import { doLogout } from '../../redux/userSlice';
 import { useEffect, useRef, useState } from 'react';
 import {
   FiMenu, FiX, FiHome, FiUsers, FiBookOpen,
-  FiFileText, FiBarChart2, FiLogOut, FiClipboard
+  FiFileText, FiBarChart2, FiLogOut
 } from 'react-icons/fi';
 import ChangePassword from './ChangePassword';
 import './Layout.scss';
@@ -29,8 +29,7 @@ const roleMenus: Record<string, MenuItem[]> = {
   ],
   STUDENT: [
     { to: '/student', label: 'Dashboard', icon: <FiHome /> },
-    { to: '/student/classes', label: 'Lớp học của tôi', icon: <FiBookOpen /> },
-    { to: '/student/history', label: 'Lịch sử làm bài', icon: <FiClipboard /> },
+    { to: '/student/classes', label: 'Lớp học của tôi', icon: <FiBookOpen /> }
   ],
 };
 
